@@ -1,6 +1,5 @@
-package com.noriservices.norisales.repository;
+package com.noriservices.norisales.domain.user;
 
-import com.noriservices.norisales.model.UserModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,5 @@
-package com.noriservices.norisales.service;
+package com.noriservices.norisales.domain.user;
 
-import com.noriservices.norisales.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

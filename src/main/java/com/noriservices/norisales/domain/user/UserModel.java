@@ -1,7 +1,9 @@
-package com.noriservices.norisales.model;
+package com.noriservices.norisales.domain.user;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,6 +15,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Table(name = "users")
 @Entity
@@ -35,10 +39,11 @@ public class UserModel implements Serializable, UserDetails {
     @Column(name = "password", length = 255, nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "role", length = 255, nullable = false)
-    private String role;
+    private UserRole role;
 
-    @Column(name = "active", nullable = false)
+    @Column(name = "active")
     private Boolean active;
 
     @Column(name = "created_at",  nullable = false)
@@ -47,9 +52,16 @@ public class UserModel implements Serializable, UserDetails {
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
 
+    public UserModel(String name, String email, String password, UserRole role) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.getRole()));
     }
 
     @Override
