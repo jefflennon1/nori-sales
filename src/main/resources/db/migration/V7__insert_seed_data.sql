@@ -10,7 +10,7 @@ INSERT INTO users (id, name, email, password, role) VALUES
     (gen_random_uuid(),
      'Nori Admin',
      'admin@nori.com',
-     '$2a$10$REPLACE_WITH_REAL_BCRYPT_HASH_ADMIN1234_____________',
+     '$2y$10$EdxsV8xLm8j8.Df9wU.yPOkHBPKwXEhYV97QUXjIdKMZRFdi.IGyW',
      'ADMIN');
 
 -- Demo buyer user (password: demo1234)
@@ -18,7 +18,7 @@ INSERT INTO users (id, name, email, password, role) VALUES
     (gen_random_uuid(),
      'Demo Buyer',
      'buyer@demo.com',
-     '$2a$10$REPLACE_WITH_REAL_BCRYPT_HASH_DEMO1234______________',
+     '$2y$10$kwWpzwmvLCO3c.QFzACXY.bHDwSHQtXUxN5JagYdsuo6.kkKMcFd.',
      'BUYER');
 
 -- Categories
