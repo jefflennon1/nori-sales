@@ -33,6 +33,9 @@ public class UserModel implements Serializable, UserDetails {
     @Column(name = "name", length = 150, nullable = false)
     private String name;
 
+    @Column( name = "username", length = 30, nullable = false)
+    private String username;
+
     @Column(name = "email", length = 255, nullable = false)
     private String email;
 
@@ -52,7 +55,8 @@ public class UserModel implements Serializable, UserDetails {
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
 
-    public UserModel(String name, String email, String password, UserRole role) {
+    public UserModel(String username, String name, String email, String password, UserRole role) {
+        this.username = username;
         this.name = name;
         this.email = email;
         this.password = password;
@@ -66,7 +70,7 @@ public class UserModel implements Serializable, UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return username;
     }
 
     @Override

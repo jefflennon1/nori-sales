@@ -2,9 +2,10 @@ package com.noriservices.norisales.domain.user;
 
 import com.noriservices.norisales.domain.user.dto.AuthenticationDTO;
 import com.noriservices.norisales.domain.user.dto.RegisterDTO;
+import com.noriservices.norisales.domain.user.dto.ResponseUserDTO;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,25 +30,29 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data){
-        var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
+      UserModel user = (UserModel) this.userRepository.findByUsername(data.username());
+        if( user == null) return ResponseEntity.notFound().build();
+
+        var usernamePassword = new UsernamePasswordAuthenticationToken(data.username(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword) ;
 
-        return ResponseEntity.ok().body(auth);
+        return ResponseEntity.ok().body(new ResponseUserDTO(user.getUsername(), user.getEmail(), user.getRole(), user.isEnabled()));
     }
 
 
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody @Valid RegisterDTO data){
-        if(this.userRepository.findByEmail(data.email()).isPresent()) return ResponseEntity.badRequest().build();
+        if(this.userRepository.findByUsername(data.username()) != null) return ResponseEntity.badRequest().build();
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
 
-        UserModel user = new UserModel(data.name(), data.email(), encryptedPassword, data.role());
+        UserModel user = new UserModel(data.username(), data.name(), data.email(), encryptedPassword, data.role());
         user.setActive(true);
         user.setCreatedAt(new Date());
         user.setUpdatedAt(new Date());
         this.userRepository.save(user);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ResponseUserDTO(user.getUsername(), user.getEmail(), user.getRole(), user.isEnabled()));
     }
 }

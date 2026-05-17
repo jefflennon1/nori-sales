@@ -6,19 +6,21 @@
 -- =============================================================
 
 -- Admin user (password: admin1234)
-INSERT INTO users (id, name, email, password, role) VALUES
+INSERT INTO users (id, name, username, email, password, role) VALUES
     (gen_random_uuid(),
      'Nori Admin',
+     'admin',
      'admin@nori.com',
-     '$2y$10$EdxsV8xLm8j8.Df9wU.yPOkHBPKwXEhYV97QUXjIdKMZRFdi.IGyW',
+     '$2y$10$Ro.KbFb7mbpWyu/YzqeRJuHwWiGOBS2KsLCGpoZiGWkUE.tjviXXG',
      'ADMIN');
 
 -- Demo buyer user (password: demo1234)
-INSERT INTO users (id, name, email, password, role) VALUES
+INSERT INTO users (id, name, username, email, password, role) VALUES
     (gen_random_uuid(),
      'Demo Buyer',
+     'buyer',
      'buyer@demo.com',
-     '$2y$10$kwWpzwmvLCO3c.QFzACXY.bHDwSHQtXUxN5JagYdsuo6.kkKMcFd.',
+     '$2y$10$oU6E5S5VXHtRq0FY.kmEXuOYrFLu0g2JBCROMHvqgMObmXew1S0iW',  -- buyer123
      'BUYER');
 
 -- Categories
