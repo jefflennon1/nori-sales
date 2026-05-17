@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -47,13 +48,13 @@ public class UserModel implements Serializable, UserDetails {
     private UserRole role;
 
     @Column(name = "active")
-    private Boolean active;
+    private boolean active;
 
     @Column(name = "created_at",  nullable = false)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
-    private Date updatedAt;
+    private LocalDateTime updatedAt;
 
     public UserModel(String username, String name, String email, String password, UserRole role) {
         this.username = username;
@@ -95,6 +96,18 @@ public class UserModel implements Serializable, UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return active;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.active = true;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 }
