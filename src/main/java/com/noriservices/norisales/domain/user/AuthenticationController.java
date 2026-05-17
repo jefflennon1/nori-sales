@@ -1,7 +1,7 @@
 package com.noriservices.norisales.domain.user;
 
 import com.noriservices.norisales.domain.user.dto.AuthenticationDTO;
-import com.noriservices.norisales.domain.user.dto.RegisterDTO;
+import com.noriservices.norisales.domain.user.dto.RegisterUserDTO;
 import com.noriservices.norisales.domain.user.dto.ResponseUserDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ public class AuthenticationController {
 
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody @Valid RegisterDTO data){
+    public ResponseEntity register(@RequestBody @Valid RegisterUserDTO data){
         if(this.userRepository.findByUsername(data.username()) != null) return ResponseEntity.badRequest().build();
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
