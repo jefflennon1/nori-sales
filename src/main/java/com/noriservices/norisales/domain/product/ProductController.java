@@ -34,7 +34,7 @@ public class ProductController {
        boolean existsProduct = service.isProductExists(newProductDTO.name(), newProductDTO.price());
        if(existsProduct) return ResponseEntity.status(HttpStatus.CONFLICT).build();
        ProductResponseDTO created =  service.save(newProductDTO);
-       return ResponseEntity.ok().body(created);
+       return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @DeleteMapping("/delete={id}")
