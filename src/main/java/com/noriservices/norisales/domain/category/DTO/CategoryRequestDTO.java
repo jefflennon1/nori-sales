@@ -1,4 +1,6 @@
 package com.noriservices.norisales.domain.category.DTO;
 
-public record CategoryRequestDTO(String name, String description, boolean active) {
+import java.util.UUID;
+
+public record CategoryRequestDTO(UUID id, String name, String description, boolean active) {
 }

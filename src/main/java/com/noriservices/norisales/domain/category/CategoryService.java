@@ -3,6 +3,8 @@ package com.noriservices.norisales.domain.category;
 import com.noriservices.norisales.domain.category.DTO.CategoryRequestDTO;
 import com.noriservices.norisales.domain.category.DTO.CategoryResponseDTO;
 import jakarta.validation.Valid;
+import org.apache.kafka.common.Uuid;
+import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +29,11 @@ public class CategoryService {
 
     public CategoryModel findEntityByName(String name){
         Optional<CategoryModel> entity = repository.findByName(name);
-        return entity.orElse(null);
+        return entity.orElseThrow(() -> new ResourceNotFoundException("Category not found: " + name));
+    }
+    public CategoryModel findEntityById(UUID id){
+        Optional<CategoryModel> entity = repository.findById(id);
+        return entity.orElseThrow(() -> new ResourceNotFoundException("Category not found: " + id));
     }
 
     public CategoryResponseDTO parseToResponse(CategoryRequestDTO dto){
@@ -55,6 +61,17 @@ public class CategoryService {
       CategoryModel entity = repository.save(mapper.toEntity(dto));
       return mapper.toResponse(entity);
     }
+    public CategoryResponseDTO update(UUID id, CategoryRequestDTO dto) {
+        CategoryModel entity = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found: " + id));
+
+        entity.setName(dto.name());
+        entity.setDescription(dto.description());
+        entity.setActive(dto.active());
+
+        return mapper.toResponse(repository.save(entity));
+    }
+
 
     public void delete(UUID id) {
        Optional<CategoryModel> entity = repository.findById(id);

@@ -3,6 +3,7 @@ package com.noriservices.norisales.domain.category;
 import com.noriservices.norisales.domain.category.DTO.CategoryRequestDTO;
 import com.noriservices.norisales.domain.category.DTO.CategoryResponseDTO;
 import jakarta.validation.Valid;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,15 @@ public class CategoryController {
         if(categoryResponseDTO != null) return ResponseEntity.status(HttpStatus.CONFLICT).build();
 
         CategoryResponseDTO response = service.save(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity update(@RequestBody @Valid CategoryRequestDTO dto){
+        CategoryResponseDTO categoryResponseDTO = service.findById(dto.id());
+        if(categoryResponseDTO == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+        CategoryResponseDTO response = service.update(dto.id(), dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

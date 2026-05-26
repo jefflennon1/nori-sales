@@ -1,9 +1,11 @@
 package com.noriservices.norisales.domain.product;
 
+import com.noriservices.norisales.domain.category.CategoryModel;
 import com.noriservices.norisales.domain.category.CategoryService;
 import com.noriservices.norisales.domain.product.DTO.ProductRequestDTO;
 import com.noriservices.norisales.domain.product.DTO.ProductResponseDTO;
 import jakarta.validation.Valid;
+import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +52,20 @@ public class ProductService {
       List<ProductModel> list = repository.findAll();
       Stream<ProductResponseDTO> items = list.stream().map((item -> mapper.toResponse(item)));
       return items.toList();
+    }
+    public ProductResponseDTO update(UUID id, @Valid ProductRequestDTO dto) {
+        ProductModel entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found: " + id));
+        entity.setName(dto.name());
+        entity.setDescription(dto.description());
+        entity.setActive(dto.active());
+        entity.setPrice(dto.price());
+        entity.setAvailableQuantity(dto.availableQuantity());
+
+        if(dto.category() != null){
+            CategoryModel category = categoryService.findEntityById(dto.category().id());
+            entity.setCategory(category);
+        }
+        return mapper.toResponse(repository.save(entity));
     }
 
     public void delete(UUID id) {

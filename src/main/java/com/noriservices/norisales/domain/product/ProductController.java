@@ -37,6 +37,14 @@ public class ProductController {
        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
+    @PutMapping("/update")
+    public ResponseEntity update(@RequestBody @Valid ProductRequestDTO newProductDTO){
+        boolean existsProduct = service.isProductExists(newProductDTO.name(), newProductDTO.price());
+        if(!existsProduct) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        ProductResponseDTO updated =  service.update(newProductDTO.id(), newProductDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(updated);
+    }
+
     @DeleteMapping("/delete={id}")
     public ResponseEntity exclude(@PathVariable UUID id){
         ProductResponseDTO dto = service.findById(id);
