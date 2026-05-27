@@ -18,7 +18,7 @@ import java.util.UUID;
 public class ProductModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(name = "name", length = 250)
@@ -45,4 +45,18 @@ public class ProductModel {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+
+    @PrePersist
+    public void prePersist() {
+        this.active = true;
+        this.availableQuantity = 0;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }
