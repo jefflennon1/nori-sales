@@ -49,7 +49,7 @@ public class CategoryController {
         if(categoryResponseDTO == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
         CategoryResponseDTO response = service.update(dto.id(), dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping("/delete={id}")

@@ -33,7 +33,10 @@ public class ProductService {
         return entity.map(productModel -> mapper.toResponse(productModel)).orElse(null);
     }
 
-    public boolean isProductExists(String name, BigDecimal price) {
+    public boolean isProductExists(UUID id , String name, BigDecimal price) {
+       if(id != null){
+        return  repository.findById(id).isPresent();
+       }
        return repository.findByNameAndPrice(name, price).isPresent();
     }
 

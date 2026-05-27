@@ -31,7 +31,7 @@ public class ProductController {
 
     @PostMapping("/create")
     public ResponseEntity create(@RequestBody @Valid ProductRequestDTO newProductDTO){
-       boolean existsProduct = service.isProductExists(newProductDTO.name(), newProductDTO.price());
+       boolean existsProduct = service.isProductExists(newProductDTO.id(), newProductDTO.name(), newProductDTO.price());
        if(existsProduct) return ResponseEntity.status(HttpStatus.CONFLICT).build();
        ProductResponseDTO created =  service.save(newProductDTO);
        return ResponseEntity.status(HttpStatus.CREATED).body(created);
@@ -39,10 +39,10 @@ public class ProductController {
 
     @PutMapping("/update")
     public ResponseEntity update(@RequestBody @Valid ProductRequestDTO newProductDTO){
-        boolean existsProduct = service.isProductExists(newProductDTO.name(), newProductDTO.price());
+        boolean existsProduct = service.isProductExists(newProductDTO.id(), newProductDTO.name(), newProductDTO.price());
         if(!existsProduct) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         ProductResponseDTO updated =  service.update(newProductDTO.id(), newProductDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(updated);
+        return ResponseEntity.status(HttpStatus.OK).body(updated);
     }
 
     @DeleteMapping("/delete={id}")
