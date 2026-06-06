@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 @Service
 public class OrderService {
@@ -22,5 +21,12 @@ public class OrderService {
                .stream()
                .map(orderMapper::toResponse)
                .toList();
+    }
+
+    public List<OrderResponseDTO> finAll() {
+        return repository.findAll()
+                .stream()
+                .map(orderMapper::toResponse)
+                .toList();
     }
 }

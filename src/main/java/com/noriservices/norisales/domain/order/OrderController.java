@@ -18,10 +18,15 @@ public class OrderController {
     @Autowired
     private OrderService service;
 
-    @GetMapping("/user-list={uuid}")
-    public ResponseEntity findByByUser(@PathVariable("uuid") UUID id){
-       List<OrderResponseDTO> ListDto =  service.findByUserId(id);
-       if(ListDto == null) return ResponseEntity.notFound().build();
-       return ResponseEntity.ok().body(ListDto);
+    @GetMapping("/all")
+    private ResponseEntity<List<OrderResponseDTO>> findAll(){
+       return  ResponseEntity.ok().body(service.finAll());
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<OrderResponseDTO>> findByByUser(@PathVariable("userId") UUID id){
+       return ResponseEntity.ok().body(service.findByUserId(id));
+    }
+
+
 }
