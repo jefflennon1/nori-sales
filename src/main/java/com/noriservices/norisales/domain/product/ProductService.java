@@ -32,6 +32,10 @@ public class ProductService {
         Optional<ProductModel> entity = repository.findById(id);
         return entity.map(productModel -> mapper.toResponse(productModel)).orElse(null);
     }
+    public ProductModel findEntityById(UUID id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found: " + id));
+    }
 
     public boolean isProductExists(UUID id , String name, BigDecimal price) {
        if(id != null){
