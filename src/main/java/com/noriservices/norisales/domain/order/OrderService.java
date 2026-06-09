@@ -8,6 +8,7 @@ import com.noriservices.norisales.domain.product.DTO.ProductResponseDTO;
 import com.noriservices.norisales.domain.product.ProductModel;
 import com.noriservices.norisales.domain.product.ProductService;
 import com.noriservices.norisales.domain.user.UserModel;
+import com.noriservices.norisales.domain.user.UserService;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class OrderService {
@@ -30,8 +32,11 @@ public class OrderService {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private UserService userService;
+
     public List<OrderResponseDTO> findByUser(){
-        UserModel user = extractLoggedUser();
+        UserModel user = userService.extractLoggedUser();
 
         return repository.findByUserId(user.getId())
                .stream()
@@ -46,7 +51,7 @@ public class OrderService {
     }
 
     public OrderResponseDTO create(OrderRequestDTO order) {
-        UserModel user = extractLoggedUser();
+        UserModel user = userService.extractLoggedUser();
         List<OrderItemModel> orderItems = new ArrayList<>();
         for(OrderItemRequestDTO item: order.items()){
             ProductModel product = productService.findEntityById(item.productId());
@@ -79,9 +84,7 @@ public class OrderService {
         return orderMapper.toResponse(repository.save(orderModel));
     }
 
-    private static @Nullable UserModel extractLoggedUser() {
-        return (UserModel) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public OrderModel findById(UUID orderId) {
+       return repository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not Found: "+ orderId));
     }
-
-
 }
