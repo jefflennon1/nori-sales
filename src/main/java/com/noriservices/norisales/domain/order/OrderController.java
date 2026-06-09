@@ -4,10 +4,7 @@ import com.noriservices.norisales.domain.order.DTO.OrderRequestDTO;
 import com.noriservices.norisales.domain.order.DTO.OrderResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,8 +26,8 @@ public class OrderController {
     }
 
     @PostMapping("/create")
-    private ResponseEntity<?> create(OrderRequestDTO order){
-        service.create(order);
-        return ResponseEntity.ok().build();
+    private ResponseEntity<OrderResponseDTO> create(@RequestBody OrderRequestDTO order){
+       OrderResponseDTO response = service.create(order);
+        return ResponseEntity.ok().body(response);
     }
 }

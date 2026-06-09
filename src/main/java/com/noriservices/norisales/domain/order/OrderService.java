@@ -1,5 +1,6 @@
 package com.noriservices.norisales.domain.order;
 
+import com.noriservices.norisales.domain.order.DTO.OderStatusDTO;
 import com.noriservices.norisales.domain.order.DTO.OrderItemRequestDTO;
 import com.noriservices.norisales.domain.order.DTO.OrderRequestDTO;
 import com.noriservices.norisales.domain.order.DTO.OrderResponseDTO;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,15 +45,38 @@ public class OrderService {
                 .toList();
     }
 
-    public void create(OrderRequestDTO order) {
+    public OrderResponseDTO create(OrderRequestDTO order) {
         UserModel user = extractLoggedUser();
-        List<ProductModel> products = new ArrayList<>();
+        List<OrderItemModel> orderItems = new ArrayList<>();
         for(OrderItemRequestDTO item: order.items()){
             ProductModel product = productService.findEntityById(item.productId());
             if(!product.isActive()) throw new RuntimeException(" Product is inactive: "+ item.productId());
             if(product.getAvailableQuantity() < item.quantity() ) throw new RuntimeException("The available quantity  of the product is less than the requested amount: "+ item.productId());
-            products.add(product);
+
+            BigDecimal unitPrice = product.getPrice();
+            BigDecimal subtotal = unitPrice.multiply(BigDecimal.valueOf(item.quantity()));
+            OrderItemModel orderItemModel = new OrderItemModel();
+            orderItemModel.setQuantity(item.quantity());
+            orderItemModel.setUnitPrice(unitPrice);
+            orderItemModel.setSubtotal(subtotal);
+            orderItemModel.setProduct(product);
+
+            orderItems.add(orderItemModel);
+
         }
+
+       BigDecimal totalPrice = orderItems.stream()
+               .map(OrderItemModel::getSubtotal)
+               .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        OrderModel orderModel = new OrderModel();
+        orderModel.setItems(orderItems);
+        orderModel.setTotalPrice(totalPrice);
+        orderModel.setUser(user);
+
+        orderItems.forEach(item -> item.setOrder(orderModel));
+
+        return orderMapper.toResponse(repository.save(orderModel));
     }
 
     private static @Nullable UserModel extractLoggedUser() {
