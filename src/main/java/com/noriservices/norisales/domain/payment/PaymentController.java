@@ -1,7 +1,10 @@
 package com.noriservices.norisales.domain.payment;
 
+import com.mercadopago.exceptions.MPApiException;
+import com.mercadopago.exceptions.MPException;
 import com.noriservices.norisales.domain.payment.DTO.PaymentResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,8 +18,9 @@ public class PaymentController {
     private PaymentService paymentService;
 
     @PostMapping("/{orderId}")
-    public ResponseEntity<?> sendPayment(@PathVariable UUID orderId){
-       PaymentResponseDTO response = paymentService.generatePaymentByPix(orderId);
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<PaymentResponseDTO> generatePix(@PathVariable UUID orderId) throws MPException, MPApiException {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(paymentService.generatePaymentByPix(orderId));
     }
 }
