@@ -10,11 +10,15 @@ import com.noriservices.norisales.domain.order.OrderModel;
 import com.noriservices.norisales.domain.order.OrderService;
 import com.noriservices.norisales.domain.order.OrderStatus;
 import com.noriservices.norisales.domain.payment.DTO.PaymentResponseDTO;
+import com.noriservices.norisales.domain.payment.DTO.WebhookDTO;
 import com.noriservices.norisales.domain.user.UserModel;
 import com.noriservices.norisales.domain.user.UserService;
+import jakarta.transaction.Transactional;
+import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -77,6 +81,19 @@ public class PaymentService {
             throw new RuntimeException("Mercado Pago API error: " + e.getApiResponse().getContent());
         } catch (MPException e) {
             throw new RuntimeException("Mercado Pago error: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void processPaymentWebhook(WebhookDTO webhookDTO) throws MPException, MPApiException {
+        PaymentClient client = new PaymentClient();
+        Payment mpPayment = client.get(Long.parseLong(webhookDTO.data().id()));
+        if(mpPayment.getStatus().equals("approved")){
+            PaymentModel payment = repository.findByExternalId(webhookDTO.data().id()).orElseThrow(() -> new ResourceNotFoundException("Payment not found: "+ webhookDTO.data().id()));
+            payment.setStatus(PaymentStatus.APPROVED);
+            payment.setPaidAt(LocalDateTime.now());
+            repository.save(payment);
+            orderService.confirmPayment(payment.getOrder().getId());
         }
     }
 

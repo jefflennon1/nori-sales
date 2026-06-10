@@ -9,6 +9,7 @@ import com.noriservices.norisales.domain.product.ProductModel;
 import com.noriservices.norisales.domain.product.ProductService;
 import com.noriservices.norisales.domain.user.UserModel;
 import com.noriservices.norisales.domain.user.UserService;
+import jakarta.transaction.Transactional;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,5 +87,13 @@ public class OrderService {
 
     public OrderModel findById(UUID orderId) {
        return repository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not Found: "+ orderId));
+    }
+
+
+    @Transactional
+    public void confirmPayment(UUID orderId) {
+        OrderModel order = findById(orderId);
+        order.setStatus(OrderStatus.PAYMENT_CONFIRMED);
+        repository.save(order);
     }
 }

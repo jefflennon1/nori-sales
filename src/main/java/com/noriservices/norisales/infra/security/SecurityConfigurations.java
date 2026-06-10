@@ -29,6 +29,7 @@ public class SecurityConfigurations {
                 .sessionManagement( session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                                 .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/payments/webhook").permitAll()
                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

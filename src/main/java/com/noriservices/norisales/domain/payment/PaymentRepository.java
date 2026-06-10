@@ -10,4 +10,6 @@ import java.util.UUID;
 public interface PaymentRepository extends JpaRepository<PaymentModel, UUID> {
 
     Optional<PaymentModel> findByOrderIdAndStatus(UUID orderId, PaymentStatus status);
+
+    Optional<PaymentModel> findByExternalId(String id);
 }
