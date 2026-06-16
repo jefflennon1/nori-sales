@@ -26,7 +26,7 @@ public class PaymentController {
     }
 
     @PostMapping("/webhook")
-    public ResponseEntity<?> paymentNotification(@RequestBody WebhookDTO webhookDTO) throws MPException, MPApiException {
+    public ResponseEntity<?> paymentNotification(@RequestBody  WebhookDTO webhookDTO) throws MPException, MPApiException {
         paymentService.processPaymentWebhook(webhookDTO);
 
         return ResponseEntity.ok().build();

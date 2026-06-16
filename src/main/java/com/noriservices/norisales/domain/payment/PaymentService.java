@@ -13,6 +13,9 @@ import com.noriservices.norisales.domain.payment.DTO.PaymentResponseDTO;
 import com.noriservices.norisales.domain.payment.DTO.WebhookDTO;
 import com.noriservices.norisales.domain.user.UserModel;
 import com.noriservices.norisales.domain.user.UserService;
+import com.noriservices.norisales.infra.kafka.OrderConfirmedEvent;
+import com.noriservices.norisales.infra.kafka.OrderItemEventDTO;
+import com.noriservices.norisales.infra.kafka.SaleEventProducerService;
 import jakarta.transaction.Transactional;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,9 @@ public class PaymentService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private SaleEventProducerService saleEventProducer;
 
     public PaymentResponseDTO generatePaymentByPix(UUID orderId) throws MPException, MPApiException {
         try {
@@ -94,6 +100,21 @@ public class PaymentService {
             payment.setPaidAt(LocalDateTime.now());
             repository.save(payment);
             orderService.confirmPayment(payment.getOrder().getId());
+
+            OrderModel order = payment.getOrder();
+            OrderConfirmedEvent event = new OrderConfirmedEvent(
+                    order.getId(),
+                    order.getUser().getId(),
+                    order.getItems().stream()
+                            .map(item -> new OrderItemEventDTO(
+                                    item.getProduct().getId(),
+                                    item.getQuantity()
+                            ))
+                            .toList(),
+                    LocalDateTime.now()
+            );
+
+            saleEventProducer.publishOrderConfirmed(event);
         }
     }
 
