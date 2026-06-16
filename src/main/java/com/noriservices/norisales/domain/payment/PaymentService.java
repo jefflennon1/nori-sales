@@ -101,7 +101,7 @@ public class PaymentService {
             repository.save(payment);
             orderService.confirmPayment(payment.getOrder().getId());
 
-            OrderModel order = payment.getOrder();
+            OrderModel order = orderService.findById(payment.getOrder().getId());
             OrderConfirmedEvent event = new OrderConfirmedEvent(
                     order.getId(),
                     order.getUser().getId(),

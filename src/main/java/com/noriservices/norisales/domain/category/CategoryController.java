@@ -19,14 +19,14 @@ public class CategoryController {
     private CategoryService service;
 
     @GetMapping("/all")
-    public ResponseEntity getAll(){
+    public ResponseEntity<List<CategoryResponseDTO>> getAll(){
        List<CategoryResponseDTO> list =  service.getAll();
        return ResponseEntity.ok().body(list);
     }
 
 
     @GetMapping("/{id}")
-    public ResponseEntity findById(@PathVariable UUID id){
+    public ResponseEntity<CategoryResponseDTO> findById(@PathVariable UUID id){
        CategoryResponseDTO response = service.findById(id);
        if(response == null) return ResponseEntity.notFound().build();
 
@@ -34,7 +34,7 @@ public class CategoryController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity save(@RequestBody @Valid CategoryRequestDTO dto){
+    public ResponseEntity<CategoryResponseDTO> save(@RequestBody @Valid CategoryRequestDTO dto){
         CategoryResponseDTO categoryResponseDTO = service.findByName(dto.name());
         if(categoryResponseDTO != null) return ResponseEntity.status(HttpStatus.CONFLICT).build();
 
@@ -43,7 +43,7 @@ public class CategoryController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity update(@RequestBody @Valid CategoryRequestDTO dto){
+    public ResponseEntity<CategoryResponseDTO> update(@RequestBody @Valid CategoryRequestDTO dto){
         CategoryResponseDTO categoryResponseDTO = service.findById(dto.id());
         if(categoryResponseDTO == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
@@ -52,7 +52,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/delete={id}")
-    public ResponseEntity delete(@PathVariable UUID id){
+    public ResponseEntity<CategoryResponseDTO> delete(@PathVariable UUID id){
        CategoryResponseDTO dto = service.findById(id);
        if(dto != null) return ResponseEntity.notFound().build();
        service.delete(id);
