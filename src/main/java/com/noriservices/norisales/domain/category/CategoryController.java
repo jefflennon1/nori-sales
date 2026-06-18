@@ -4,6 +4,9 @@ import com.noriservices.norisales.domain.category.DTO.CategoryRequestDTO;
 import com.noriservices.norisales.domain.category.DTO.CategoryResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,11 +22,9 @@ public class CategoryController {
     private CategoryService service;
 
     @GetMapping("/all")
-    public ResponseEntity<List<CategoryResponseDTO>> getAll(){
-       List<CategoryResponseDTO> list =  service.getAll();
-       return ResponseEntity.ok().body(list);
+    public ResponseEntity<Page<CategoryResponseDTO>> getAll(@PageableDefault(size = 10, sort = "name")Pageable pageable){
+       return ResponseEntity.ok().body(service.getAllPageable(pageable));
     }
-
 
     @GetMapping("/{id}")
     public ResponseEntity<CategoryResponseDTO> findById(@PathVariable UUID id){

@@ -7,14 +7,14 @@ import com.noriservices.norisales.domain.product.DTO.ProductResponseDTO;
 import jakarta.validation.Valid;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 @Service
 public class ProductService {
@@ -55,11 +55,11 @@ public class ProductService {
         return mapper.toResponse(created);
     }
 
-    public List<ProductResponseDTO> findAll() {
-      List<ProductModel> list = repository.findAll();
-      Stream<ProductResponseDTO> items = list.stream().map((item -> mapper.toResponse(item)));
-      return items.toList();
+    public Page<ProductResponseDTO> findAllPageable(Pageable pageable) {
+      Page<ProductModel> products = repository.findAll(pageable);
+      return products.map(item-> mapper.toResponse(item));
     }
+
     public ProductResponseDTO update(UUID id, @Valid ProductRequestDTO dto) {
         ProductModel entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found: " + id));
         entity.setName(dto.name());

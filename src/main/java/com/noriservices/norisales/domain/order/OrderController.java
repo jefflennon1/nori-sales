@@ -3,6 +3,9 @@ package com.noriservices.norisales.domain.order;
 import com.noriservices.norisales.domain.order.DTO.OrderRequestDTO;
 import com.noriservices.norisales.domain.order.DTO.OrderResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,8 +19,8 @@ public class OrderController {
     private OrderService service;
 
     @GetMapping("/all")
-    private ResponseEntity<List<OrderResponseDTO>> findAll(){
-       return  ResponseEntity.ok().body(service.finAll());
+    private ResponseEntity<Page<OrderResponseDTO>> findAll(@PageableDefault(size = 10, sort = "id")Pageable pageable){
+       return  ResponseEntity.ok().body(service.finAllPageable(pageable));
     }
 
     @GetMapping("/my-orders")

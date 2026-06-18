@@ -13,6 +13,8 @@ import jakarta.transaction.Transactional;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -44,11 +46,8 @@ public class OrderService {
                .map(orderMapper::toResponse)
                .toList();
     }
-    public List<OrderResponseDTO> finAll() {
-        return repository.findAll()
-                .stream()
-                .map(orderMapper::toResponse)
-                .toList();
+    public Page<OrderResponseDTO> finAllPageable(Pageable pageable) {
+        return repository.findAll(pageable).map(orderMapper::toResponse);
     }
 
     public OrderResponseDTO create(OrderRequestDTO order) {

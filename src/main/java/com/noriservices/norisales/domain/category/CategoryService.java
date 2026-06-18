@@ -6,6 +6,8 @@ import jakarta.validation.Valid;
 import org.apache.kafka.common.Uuid;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -40,16 +42,9 @@ public class CategoryService {
         return mapper.toResponseDTO(dto);
     }
 
-    public List<CategoryResponseDTO> getAll() {
-        List<CategoryModel>  list = repository.findAll();
-        List<CategoryResponseDTO> response = new ArrayList<>();
-
-        for(CategoryModel model : list){
-            CategoryResponseDTO dto =  mapper.toResponse(model);
-            response.add(dto);
-        }
-
-        return response;
+    public Page<CategoryResponseDTO> getAllPageable(Pageable pageable) {
+        return repository.findAll(pageable)
+               .map(mapper::toResponse);
     }
 
     public CategoryResponseDTO findById(UUID id) {

@@ -4,11 +4,13 @@ import com.noriservices.norisales.domain.product.DTO.ProductRequestDTO;
 import com.noriservices.norisales.domain.product.DTO.ProductResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -19,8 +21,8 @@ public class ProductController {
     private ProductService service;
 
     @GetMapping("/all")
-    public ResponseEntity<List<ProductResponseDTO>> findAll(){
-        return ResponseEntity.ok().body(service.findAll());
+    public ResponseEntity<Page<ProductResponseDTO>> findAll(@PageableDefault(size = 10, sort = "name") Pageable pageable){
+        return ResponseEntity.ok().body(service.findAllPageable(pageable));
     }
 
     @GetMapping("/{id}")
