@@ -13,7 +13,7 @@ import com.noriservices.norisales.domain.payment.DTO.PaymentResponseDTO;
 import com.noriservices.norisales.domain.payment.DTO.WebhookDTO;
 import com.noriservices.norisales.domain.user.UserModel;
 import com.noriservices.norisales.domain.user.UserService;
-import com.noriservices.norisales.infra.kafka.OrderConfirmedEvent;
+import com.noriservices.norisales.infra.kafka.OrderConfirmedEventDTO;
 import com.noriservices.norisales.infra.kafka.OrderItemEventDTO;
 import com.noriservices.norisales.infra.kafka.SaleEventProducerService;
 import jakarta.transaction.Transactional;
@@ -102,7 +102,7 @@ public class PaymentService {
             orderService.confirmPayment(payment.getOrder().getId());
 
             OrderModel order = orderService.findById(payment.getOrder().getId());
-            OrderConfirmedEvent event = new OrderConfirmedEvent(
+            OrderConfirmedEventDTO event = new OrderConfirmedEventDTO(
                     order.getId(),
                     order.getUser().getId(),
                     order.getItems().stream()

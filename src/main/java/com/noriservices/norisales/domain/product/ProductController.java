@@ -34,8 +34,6 @@ public class ProductController {
 
     @PostMapping("/create")
     public ResponseEntity<ProductResponseDTO> create(@RequestBody @Valid ProductRequestDTO newProductDTO){
-       boolean existsProduct = service.isProductExists(newProductDTO.id(), newProductDTO.name(), newProductDTO.price());
-       if(existsProduct) return ResponseEntity.status(HttpStatus.CONFLICT).build();
        ProductResponseDTO created =  service.save(newProductDTO);
        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }

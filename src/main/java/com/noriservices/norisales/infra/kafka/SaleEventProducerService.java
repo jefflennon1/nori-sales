@@ -10,9 +10,10 @@ public class SaleEventProducerService {
     private static final String TOPIC = "order-confirmed";
 
     @Autowired
-    private KafkaTemplate<String, OrderConfirmedEvent> kafkaTemplate;
+    private KafkaTemplate<String, OrderConfirmedEventDTO> kafkaTemplate;
 
-    public void publishOrderConfirmed(OrderConfirmedEvent event) {
+    public void publishOrderConfirmed(OrderConfirmedEventDTO event) {
         kafkaTemplate.send(TOPIC, event.orderId().toString(), event);
+
     }
 }
