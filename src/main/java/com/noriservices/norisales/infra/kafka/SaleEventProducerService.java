@@ -14,6 +14,5 @@ public class SaleEventProducerService {
 
     public void publishOrderConfirmed(OrderConfirmedEventDTO event) {
         kafkaTemplate.send(TOPIC, event.orderId().toString(), event);
-
     }
 }

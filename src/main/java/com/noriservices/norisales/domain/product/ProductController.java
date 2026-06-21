@@ -20,7 +20,7 @@ public class ProductController {
     @Autowired
     private ProductService service;
 
-    @GetMapping("/all")
+    @GetMapping()
     public ResponseEntity<Page<ProductResponseDTO>> findAll(@PageableDefault(size = 10, sort = "name") Pageable pageable){
         return ResponseEntity.ok().body(service.findAllPageable(pageable));
     }
