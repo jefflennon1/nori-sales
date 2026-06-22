@@ -55,6 +55,11 @@ public class ProductService {
         return mapper.toResponse(created);
     }
 
+    public void saveEntity(ProductModel entity){
+        repository.save(entity);
+    }
+
+
     public Page<ProductResponseDTO> findAllPageable(Pageable pageable) {
       Page<ProductModel> products = repository.findAll(pageable);
       return products.map(item-> mapper.toResponse(item));
