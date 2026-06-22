@@ -18,7 +18,7 @@ public class PaymentController {
     @Autowired
     private PaymentService paymentService;
 
-    @PostMapping("/{orderId}")
+    @PostMapping("/{orderId}/pix")
     public ResponseEntity<PaymentResponseDTO> generatePix(@PathVariable UUID orderId) throws MPException, MPApiException {
         return ResponseEntity
                 .status(HttpStatus.CREATED)

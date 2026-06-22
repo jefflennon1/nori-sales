@@ -38,13 +38,10 @@ public class OrderService {
     @Autowired
     private UserService userService;
 
-    public List<OrderResponseDTO> findByUser(){
+    public Page<OrderResponseDTO> findByUser(Pageable pageable){
         UserModel user = userService.extractLoggedUser();
-
-        return repository.findByUserId(user.getId())
-               .stream()
-               .map(orderMapper::toResponse)
-               .toList();
+        return repository.findByUserId(user.getId(), pageable)
+                .map(orderMapper::toResponse);
     }
     public Page<OrderResponseDTO> finAllPageable(Pageable pageable) {
         return repository.findAll(pageable).map(orderMapper::toResponse);
@@ -87,8 +84,9 @@ public class OrderService {
     public OrderModel findById(UUID orderId) {
        return repository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not Found: "+ orderId));
     }
-
-
+    public OrderResponseDTO findDTOById(UUID orderId) {
+        return orderMapper.toResponse(findById(orderId));
+    }
     @Transactional
     public void confirmPayment(UUID orderId) {
         OrderModel order = findById(orderId);

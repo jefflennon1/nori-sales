@@ -15,8 +15,6 @@ public interface CategoryMapper {
 
     @Mapping(target = "id",        ignore = true)
     @Mapping(target = "active",    ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
     CategoryModel toEntity(CategoryRequestDTO request);
 
 }

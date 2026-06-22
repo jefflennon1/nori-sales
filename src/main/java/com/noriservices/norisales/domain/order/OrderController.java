@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("orders")
@@ -18,14 +19,19 @@ public class OrderController {
     @Autowired
     private OrderService service;
 
-    @GetMapping("/all")
+    @GetMapping("")
     private ResponseEntity<Page<OrderResponseDTO>> findAll(@PageableDefault(size = 10, sort = "id")Pageable pageable){
        return  ResponseEntity.ok().body(service.finAllPageable(pageable));
     }
 
     @GetMapping("/my-orders")
-    public ResponseEntity<List<OrderResponseDTO>> getByUser(){
-       return ResponseEntity.ok().body(service.findByUser());
+    public ResponseEntity<Page<OrderResponseDTO>> getByUser(@PageableDefault(size = 10, sort = "id")Pageable pageable){
+       return ResponseEntity.ok().body(service.findByUser(pageable));
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<OrderResponseDTO> getByUser(@PathVariable UUID id){
+        return ResponseEntity.ok().body(service.findDTOById(id));
     }
 
     @PostMapping("/create")
