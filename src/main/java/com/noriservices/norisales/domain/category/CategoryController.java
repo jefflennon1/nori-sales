@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("category")
+@RequestMapping("categories")
 public class CategoryController {
 
     @Autowired
     private CategoryService service;
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<Page<CategoryResponseDTO>> getAll(@PageableDefault(size = 10, sort = "name")Pageable pageable){
        return ResponseEntity.ok().body(service.getAllPageable(pageable));
     }
@@ -34,7 +34,7 @@ public class CategoryController {
        return ResponseEntity.ok().body(response);
     }
 
-    @PostMapping("/save")
+    @PostMapping
     public ResponseEntity<CategoryResponseDTO> save(@RequestBody @Valid CategoryRequestDTO dto){
         CategoryResponseDTO categoryResponseDTO = service.findByName(dto.name());
         if(categoryResponseDTO != null) return ResponseEntity.status(HttpStatus.CONFLICT).build();

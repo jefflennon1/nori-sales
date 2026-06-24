@@ -20,7 +20,7 @@ public class ProductController {
     @Autowired
     private ProductService service;
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<Page<ProductResponseDTO>> findAll(@PageableDefault(size = 10, sort = "name") Pageable pageable){
         return ResponseEntity.ok().body(service.findAllPageable(pageable));
     }
@@ -32,7 +32,7 @@ public class ProductController {
         return ResponseEntity.ok().body(product);
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<ProductResponseDTO> create(@RequestBody @Valid ProductRequestDTO newProductDTO){
        ProductResponseDTO created =  service.save(newProductDTO);
        return ResponseEntity.status(HttpStatus.CREATED).body(created);
