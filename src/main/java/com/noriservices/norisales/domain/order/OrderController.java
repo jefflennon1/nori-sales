@@ -19,7 +19,7 @@ public class OrderController {
     @Autowired
     private OrderService service;
 
-    @GetMapping("")
+    @GetMapping
     private ResponseEntity<Page<OrderResponseDTO>> findAll(@PageableDefault(size = 10, sort = "id")Pageable pageable){
        return  ResponseEntity.ok().body(service.finAllPageable(pageable));
     }
@@ -34,7 +34,7 @@ public class OrderController {
         return ResponseEntity.ok().body(service.findDTOById(id));
     }
 
-    @PostMapping("/create")
+    @PostMapping
     private ResponseEntity<OrderResponseDTO> create(@RequestBody OrderRequestDTO order){
        OrderResponseDTO response = service.create(order);
         return ResponseEntity.ok().body(response);
