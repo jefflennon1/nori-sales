@@ -27,8 +27,9 @@ import java.util.Objects;
 public class AuthenticationController {
 
     private final AuthenticationManager authenticationManager;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final JwtService  jwtService;
+    private final UserMapper mapper;
 
 
     @PostMapping("/login")
@@ -45,17 +46,7 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<ResponseUserDTO> register(@RequestBody @Valid RegisterUserDTO data){
-        if(this.userRepository.findByUsername(data.username()) != null) return ResponseEntity.badRequest().build();
-
-        String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
-
-        User user = new User(data.username(), data.name(), data.email(), encryptedPassword, data.role());
-        user.setActive(true);
-        user.setCreatedAt(LocalDateTime.now());
-        user.setUpdatedAt(LocalDateTime.now());
-        this.userRepository.save(user);
-
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ResponseUserDTO(user.getUsername(), user.getEmail(), user.getRole(), user.isEnabled()));
+                .body(mapper.toResponse(userService.save(data)));
     }
 }
