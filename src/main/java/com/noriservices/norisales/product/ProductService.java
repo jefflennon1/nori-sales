@@ -2,8 +2,8 @@ package com.noriservices.norisales.product;
 
 import com.noriservices.norisales.category.Category;
 import com.noriservices.norisales.category.CategoryService;
-import com.noriservices.norisales.product.DTO.ProductRequestDTO;
-import com.noriservices.norisales.product.DTO.ProductResponseDTO;
+import com.noriservices.norisales.product.dto.ProductRequestDTO;
+import com.noriservices.norisales.product.dto.ProductResponseDTO;
 import jakarta.validation.Valid;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

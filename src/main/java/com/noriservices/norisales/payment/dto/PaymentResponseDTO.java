@@ -1,4 +1,4 @@
-package com.noriservices.norisales.payment.DTO;
+package com.noriservices.norisales.payment.dto;
 
 
 import com.noriservices.norisales.payment.PaymentStatus;

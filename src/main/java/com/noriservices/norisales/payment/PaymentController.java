@@ -2,8 +2,8 @@ package com.noriservices.norisales.payment;
 
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
-import com.noriservices.norisales.payment.DTO.PaymentResponseDTO;
-import com.noriservices.norisales.payment.DTO.WebhookDTO;
+import com.noriservices.norisales.payment.dto.PaymentResponseDTO;
+import com.noriservices.norisales.payment.dto.WebhookDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,7 +1,7 @@
 package com.noriservices.norisales.payment;
 
 import com.noriservices.norisales.order.OrderMapper;
-import com.noriservices.norisales.payment.DTO.PaymentResponseDTO;
+import com.noriservices.norisales.payment.dto.PaymentResponseDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

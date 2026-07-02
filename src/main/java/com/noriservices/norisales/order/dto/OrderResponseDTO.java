@@ -1,4 +1,4 @@
-package com.noriservices.norisales.order.DTO;
+package com.noriservices.norisales.order.dto;
 
 import com.noriservices.norisales.order.OrderStatus;
 import com.noriservices.norisales.user.dto.ResponseUserDTO;

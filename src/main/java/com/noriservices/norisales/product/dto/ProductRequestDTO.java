@@ -1,6 +1,6 @@
-package com.noriservices.norisales.product.DTO;
+package com.noriservices.norisales.product.dto;
 
-import com.noriservices.norisales.category.DTO.CategoryResponseDTO;
+import com.noriservices.norisales.category.dto.CategoryResponseDTO;
 
 import java.math.BigDecimal;
 import java.util.UUID;

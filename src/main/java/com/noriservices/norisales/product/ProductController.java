@@ -1,7 +1,7 @@
 package com.noriservices.norisales.product;
 
-import com.noriservices.norisales.product.DTO.ProductRequestDTO;
-import com.noriservices.norisales.product.DTO.ProductResponseDTO;
+import com.noriservices.norisales.product.dto.ProductRequestDTO;
+import com.noriservices.norisales.product.dto.ProductResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

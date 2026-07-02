@@ -1,8 +1,8 @@
 package com.noriservices.norisales.category;
 
 
-import com.noriservices.norisales.category.DTO.CategoryRequestDTO;
-import com.noriservices.norisales.category.DTO.CategoryResponseDTO;
+import com.noriservices.norisales.category.dto.CategoryRequestDTO;
+import com.noriservices.norisales.category.dto.CategoryResponseDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

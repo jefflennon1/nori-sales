@@ -1,6 +1,6 @@
-package com.noriservices.norisales.order.DTO;
+package com.noriservices.norisales.order.dto;
 
-import com.noriservices.norisales.product.DTO.ProductResponseDTO;
+import com.noriservices.norisales.product.dto.ProductResponseDTO;
 
 import java.math.BigDecimal;
 
