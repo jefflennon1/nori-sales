@@ -3,6 +3,7 @@ package com.noriservices.norisales.product;
 import com.noriservices.norisales.product.dto.ProductRequestDTO;
 import com.noriservices.norisales.product.dto.ProductResponseDTO;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,10 +16,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/products")
+@RequiredArgsConstructor
 public class ProductController {
 
-    @Autowired
-    private ProductService service;
+    private final ProductService service;
 
     @GetMapping
     public ResponseEntity<Page<ProductResponseDTO>> findAll(@PageableDefault(size = 10, sort = "name") Pageable pageable){

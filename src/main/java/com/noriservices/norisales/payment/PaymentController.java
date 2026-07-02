@@ -4,6 +4,7 @@ import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
 import com.noriservices.norisales.payment.dto.PaymentResponseDTO;
 import com.noriservices.norisales.payment.dto.WebhookDTO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("payments")
+@RequiredArgsConstructor
 public class PaymentController {
 
-    @Autowired
-    private PaymentService paymentService;
+    private final PaymentService paymentService;
 
     @PostMapping("/{orderId}/pix")
     public ResponseEntity<PaymentResponseDTO> generatePix(@PathVariable UUID orderId) throws MPException, MPApiException {

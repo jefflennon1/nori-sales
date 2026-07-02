@@ -3,6 +3,7 @@ package com.noriservices.norisales.category;
 import com.noriservices.norisales.category.dto.CategoryRequestDTO;
 import com.noriservices.norisales.category.dto.CategoryResponseDTO;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,13 +14,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryService {
 
-    @Autowired
-    private CategoryRepository repository;
-
-    @Autowired
-    private CategoryMapper mapper;
+    private final CategoryRepository repository;
+    private final CategoryMapper mapper;
 
     public CategoryResponseDTO findByName(String name){
       Optional<Category> entity = repository.findByName(name);

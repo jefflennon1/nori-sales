@@ -5,6 +5,7 @@ import com.noriservices.norisales.category.CategoryService;
 import com.noriservices.norisales.product.dto.ProductRequestDTO;
 import com.noriservices.norisales.product.dto.ProductResponseDTO;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,16 +18,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
-    @Autowired
-    private ProductRepository repository;
-
-    @Autowired
-    private ProductMapper mapper;
-
-    @Autowired
-    private CategoryService categoryService;
+    private final ProductRepository repository;
+    private final ProductMapper mapper;
+    private final CategoryService categoryService;
 
     public ProductResponseDTO findById(UUID id){
         Optional<Product> entity = repository.findById(id);

@@ -2,6 +2,7 @@ package com.noriservices.norisales.order;
 
 import com.noriservices.norisales.order.dto.OrderRequestDTO;
 import com.noriservices.norisales.order.dto.OrderResponseDTO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,10 +14,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("orders")
+@RequiredArgsConstructor
 public class OrderController {
 
-    @Autowired
-    private OrderService service;
+    private final OrderService service;
 
     @GetMapping
     private ResponseEntity<Page<OrderResponseDTO>> findAll(@PageableDefault(size = 10, sort = "id")Pageable pageable){

@@ -16,8 +16,8 @@ import com.noriservices.norisales.order.event.DTO.OrderConfirmedEventDTO;
 import com.noriservices.norisales.order.event.DTO.OrderItemEventDTO;
 import com.noriservices.norisales.order.event.OrderEventProducer;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -25,22 +25,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class PaymentService {
 
-    @Autowired
-    private PaymentRepository repository;
-
-    @Autowired
-    private PaymentMapper mapper;
-
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private OrderEventProducer saleEventProducer;
+    private final PaymentRepository repository;
+    private final PaymentMapper mapper;
+    private final OrderService orderService;
+    private final UserService userService;
+    private final OrderEventProducer saleEventProducer;
 
     public PaymentResponseDTO generatePaymentByPix(UUID orderId) throws MPException, MPApiException {
         try {
