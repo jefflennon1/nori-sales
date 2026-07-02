@@ -3,6 +3,7 @@ package com.noriservices.norisales.category;
 import com.noriservices.norisales.category.dto.CategoryRequestDTO;
 import com.noriservices.norisales.category.dto.CategoryResponseDTO;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,10 +16,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("categories")
+@RequiredArgsConstructor
 public class CategoryController {
 
-    @Autowired
-    private CategoryService service;
+    private final CategoryService service;
 
     @GetMapping
     public ResponseEntity<Page<CategoryResponseDTO>> getAll(@PageableDefault(size = 10, sort = "name")Pageable pageable){

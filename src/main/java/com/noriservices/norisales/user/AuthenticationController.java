@@ -6,6 +6,7 @@ import com.noriservices.norisales.user.dto.ResponseUserDTO;
 import com.noriservices.norisales.user.dto.TokenResponseDTO;
 import com.noriservices.norisales.shared.security.JwtService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,16 +23,12 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("auth")
+@RequiredArgsConstructor
 public class AuthenticationController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private JwtService  jwtService;
+    private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+    private final JwtService  jwtService;
 
 
     @PostMapping("/login")

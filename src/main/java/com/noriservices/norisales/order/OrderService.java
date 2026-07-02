@@ -5,11 +5,11 @@ import com.noriservices.norisales.order.dto.OrderRequestDTO;
 import com.noriservices.norisales.order.dto.OrderResponseDTO;
 import com.noriservices.norisales.product.Product;
 import com.noriservices.norisales.product.ProductService;
+import com.noriservices.norisales.shared.exception.ResourceNotFoundException;
 import com.noriservices.norisales.user.User;
 import com.noriservices.norisales.user.UserService;
 import jakarta.transaction.Transactional;
-import org.apache.kafka.common.errors.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,19 +20,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class OrderService {
 
-    @Autowired
-    private OrderRepository repository;
-
-    @Autowired
-    private OrderMapper orderMapper;
-
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private UserService userService;
+    private final OrderRepository repository;
+    private final OrderMapper orderMapper;
+    private final ProductService productService;
+    private final UserService userService;
 
     public Page<OrderResponseDTO> findByUser(Pageable pageable){
         User user = userService.extractLoggedUser();
