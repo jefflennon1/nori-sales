@@ -2,10 +2,9 @@ package com.noriservices.norisales.category;
 
 import com.noriservices.norisales.category.dto.CategoryRequestDTO;
 import com.noriservices.norisales.category.dto.CategoryResponseDTO;
+import com.noriservices.norisales.shared.exception.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.kafka.common.errors.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -65,7 +64,7 @@ public class CategoryService {
 
 
     public void delete(UUID id) {
-       Optional<Category> entity = repository.findById(id);
-       repository.delete(entity.orElseThrow());
+       Category entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found: " + id));
+       repository.delete(entity);
     }
 }
