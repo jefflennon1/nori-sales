@@ -1,7 +1,7 @@
 package com.noriservices.norisales.order;
 
-import com.noriservices.norisales.order.DTO.OrderRequestDTO;
-import com.noriservices.norisales.order.DTO.OrderResponseDTO;
+import com.noriservices.norisales.order.dto.OrderRequestDTO;
+import com.noriservices.norisales.order.dto.OrderResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

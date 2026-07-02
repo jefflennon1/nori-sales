@@ -1,8 +1,8 @@
 package com.noriservices.norisales.order;
 
-import com.noriservices.norisales.order.DTO.OrderItemRequestDTO;
-import com.noriservices.norisales.order.DTO.OrderRequestDTO;
-import com.noriservices.norisales.order.DTO.OrderResponseDTO;
+import com.noriservices.norisales.order.dto.OrderItemRequestDTO;
+import com.noriservices.norisales.order.dto.OrderRequestDTO;
+import com.noriservices.norisales.order.dto.OrderResponseDTO;
 import com.noriservices.norisales.product.Product;
 import com.noriservices.norisales.product.ProductService;
 import com.noriservices.norisales.user.User;
@@ -45,7 +45,7 @@ public class OrderService {
 
     public OrderResponseDTO create(OrderRequestDTO order) {
         User user = userService.extractLoggedUser();
-        List<OrderItemModel> orderItems = new ArrayList<>();
+        List<OrderItem> orderItems = new ArrayList<>();
         for(OrderItemRequestDTO item: order.items()){
             Product product = productService.findEntityById(item.productId());
             if(!product.isActive()) throw new RuntimeException(" Product is inactive: "+ item.productId());
@@ -53,28 +53,28 @@ public class OrderService {
 
             BigDecimal unitPrice = product.getPrice();
             BigDecimal subtotal = unitPrice.multiply(BigDecimal.valueOf(item.quantity()));
-            OrderItemModel orderItemModel = new OrderItemModel();
-            orderItemModel.setQuantity(item.quantity());
-            orderItemModel.setUnitPrice(unitPrice);
-            orderItemModel.setSubtotal(subtotal);
-            orderItemModel.setProduct(product);
+            OrderItem orderItem = new OrderItem();
+            orderItem.setQuantity(item.quantity());
+            orderItem.setUnitPrice(unitPrice);
+            orderItem.setSubtotal(subtotal);
+            orderItem.setProduct(product);
 
-            orderItems.add(orderItemModel);
+            orderItems.add(orderItem);
 
         }
 
        BigDecimal totalPrice = orderItems.stream()
-               .map(OrderItemModel::getSubtotal)
+               .map(OrderItem::getSubtotal)
                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        Order Order = new Order();
-        Order.setItems(orderItems);
-        Order.setTotalPrice(totalPrice);
-        Order.setUser(user);
+        Order newOrder = new Order();
+        newOrder.setItems(orderItems);
+        newOrder.setTotalPrice(totalPrice);
+        newOrder.setUser(user);
 
-        orderItems.forEach(item -> item.setOrder(Order));
+        orderItems.forEach(item -> item.setOrder(newOrder));
 
-        return orderMapper.toResponse(repository.save(Order));
+        return orderMapper.toResponse(repository.save(newOrder));
     }
 
     public Order findById(UUID orderId) {

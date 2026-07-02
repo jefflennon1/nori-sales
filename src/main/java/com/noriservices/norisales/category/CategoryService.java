@@ -1,7 +1,7 @@
 package com.noriservices.norisales.category;
 
-import com.noriservices.norisales.category.DTO.CategoryRequestDTO;
-import com.noriservices.norisales.category.DTO.CategoryResponseDTO;
+import com.noriservices.norisales.category.dto.CategoryRequestDTO;
+import com.noriservices.norisales.category.dto.CategoryResponseDTO;
 import jakarta.validation.Valid;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class CategoryService {
 
     public CategoryResponseDTO findByName(String name){
       Optional<Category> entity = repository.findByName(name);
-        return entity.map(Category -> mapper.toResponse(Category)).orElse(null);
+        return entity.map(mapper::toResponse).orElse(null);
     }
 
     public Category findEntityByName(String name){
@@ -46,7 +46,7 @@ public class CategoryService {
 
     public CategoryResponseDTO findById(UUID id) {
        Optional<Category> entity = repository.findById(id);
-        return entity.map(Category -> mapper.toResponse(Category)).orElse(null);
+        return entity.map(mapper::toResponse).orElse(null);
     }
 
     public CategoryResponseDTO save(@Valid CategoryRequestDTO dto) {

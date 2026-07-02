@@ -5,12 +5,11 @@ import com.mercadopago.client.payment.PaymentCreateRequest;
 import com.mercadopago.client.payment.PaymentPayerRequest;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
-import com.mercadopago.resources.payment.Payment;
 import com.noriservices.norisales.order.Order;
 import com.noriservices.norisales.order.OrderService;
 import com.noriservices.norisales.order.OrderStatus;
-import com.noriservices.norisales.payment.DTO.PaymentResponseDTO;
-import com.noriservices.norisales.payment.DTO.WebhookDTO;
+import com.noriservices.norisales.payment.dto.PaymentResponseDTO;
+import com.noriservices.norisales.payment.dto.WebhookDTO;
 import com.noriservices.norisales.user.User;
 import com.noriservices.norisales.user.UserService;
 import com.noriservices.norisales.order.event.DTO.OrderConfirmedEventDTO;
@@ -65,7 +64,7 @@ public class PaymentService {
                                         .build()
                         )
                         .build();
-                Payment mpPayment = client.create(paymentRequest);
+            com.mercadopago.resources.payment.Payment mpPayment = client.create(paymentRequest);
                 Payment payment = new Payment();
                 payment.setOrder(order);
                 payment.setAmount(order.getTotalPrice());
@@ -93,7 +92,7 @@ public class PaymentService {
     @Transactional
     public void processPaymentWebhook(WebhookDTO webhookDTO) throws MPException, MPApiException {
         PaymentClient client = new PaymentClient();
-        Payment mpPayment = client.get(Long.parseLong(webhookDTO.data().id()));
+        com.mercadopago.resources.payment.Payment mpPayment = client.get(Long.parseLong(webhookDTO.data().id()));
         if(mpPayment.getStatus().equals("approved")){
             Payment payment = repository.findByExternalId(webhookDTO.data().id()).orElseThrow(() -> new ResourceNotFoundException("Payment not found: "+ webhookDTO.data().id()));
             payment.setStatus(PaymentStatus.APPROVED);

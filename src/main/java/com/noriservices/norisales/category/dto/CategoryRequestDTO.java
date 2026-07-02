@@ -1,4 +1,4 @@
-package com.noriservices.norisales.category.DTO;
+package com.noriservices.norisales.category.dto;
 
 import java.util.UUID;
 

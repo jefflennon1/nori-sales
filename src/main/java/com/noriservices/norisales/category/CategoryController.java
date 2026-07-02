@@ -1,7 +1,7 @@
 package com.noriservices.norisales.category;
 
-import com.noriservices.norisales.category.DTO.CategoryRequestDTO;
-import com.noriservices.norisales.category.DTO.CategoryResponseDTO;
+import com.noriservices.norisales.category.dto.CategoryRequestDTO;
+import com.noriservices.norisales.category.dto.CategoryResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
