@@ -54,8 +54,6 @@ public class CategoryController {
 
     @DeleteMapping("/delete={id}")
     public ResponseEntity<CategoryResponseDTO> delete(@PathVariable UUID id){
-       CategoryResponseDTO dto = service.findById(id);
-       if(dto != null) return ResponseEntity.notFound().build();
        service.delete(id);
        return ResponseEntity.ok().build();
     }
