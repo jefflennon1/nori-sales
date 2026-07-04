@@ -5,9 +5,10 @@ import com.noriservices.norisales.order.dto.OrderRequestDTO;
 import com.noriservices.norisales.order.dto.OrderResponseDTO;
 import com.noriservices.norisales.product.Product;
 import com.noriservices.norisales.product.ProductService;
+import com.noriservices.norisales.shared.exception.ForbiddenOperationException;
 import com.noriservices.norisales.shared.exception.ResourceNotFoundException;
-import com.noriservices.norisales.shared.exception.UnauthorizedUserException;
 import com.noriservices.norisales.user.User;
+import com.noriservices.norisales.user.UserRole;
 import com.noriservices.norisales.user.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -79,7 +80,7 @@ public class OrderService {
         User user = userService.extractLoggedUser();
         Order entity = findById(orderId);
         assert user != null;
-        if(!entity.getUser().getId().equals(user.getId())) throw new UnauthorizedUserException("Action not permitted for the logged-in user.");
+        if(!user.getRole().equals(UserRole.ADMIN) && !entity.getUser().getId().equals(user.getId())) throw new ForbiddenOperationException("Action not permitted for the logged-in user.");
 
         return orderMapper.toResponse(entity);
     }
