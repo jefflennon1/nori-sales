@@ -6,6 +6,7 @@ import com.noriservices.norisales.order.dto.OrderResponseDTO;
 import com.noriservices.norisales.product.Product;
 import com.noriservices.norisales.product.ProductService;
 import com.noriservices.norisales.shared.exception.ResourceNotFoundException;
+import com.noriservices.norisales.shared.exception.UnauthorizedUserException;
 import com.noriservices.norisales.user.User;
 import com.noriservices.norisales.user.UserService;
 import jakarta.transaction.Transactional;
@@ -75,7 +76,12 @@ public class OrderService {
        return repository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not Found: "+ orderId));
     }
     public OrderResponseDTO findDTOById(UUID orderId) {
-        return orderMapper.toResponse(findById(orderId));
+        User user = userService.extractLoggedUser();
+        Order entity = findById(orderId);
+        assert user != null;
+        if(!entity.getUser().getId().equals(user.getId())) throw new UnauthorizedUserException("Action not permitted for the logged-in user.");
+
+        return orderMapper.toResponse(entity);
     }
     @Transactional
     public void confirmPayment(UUID orderId) {
