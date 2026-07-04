@@ -82,14 +82,14 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(UnauthorizedUserException.class)
+    @ExceptionHandler(ForbiddenOperationException.class)
     public ResponseEntity<ApiErrorResponse> handleUnauthorizedUserException(
-            UnauthorizedUserException ex,
+            ForbiddenOperationException ex,
             HttpServletRequest request
     ) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                 ApiErrorResponse.of(
-                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.FORBIDDEN.value(),
                         "Action not permitted for the logged-in user.",
                         ex.getMessage(),
                         request.getRequestURI()
