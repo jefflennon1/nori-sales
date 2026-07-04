@@ -1,5 +1,6 @@
 package com.noriservices.norisales.shared.security;
 
+import com.noriservices.norisales.user.UserRole;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,6 +44,16 @@ public class SecurityConfigurations {
                 .authorizeHttpRequests(authorize -> authorize
                                 .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/payments/webhook").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/orders/my-orders").hasRole(UserRole.BUYER.getRole())
+                                .requestMatchers(HttpMethod.GET,  "/orders/{id}").hasAnyRole(UserRole.BUYER.getRole(), UserRole.ADMIN.getRole())
+                                .requestMatchers(HttpMethod.POST, "/orders").hasRole(UserRole.BUYER.getRole())
+                                .requestMatchers(HttpMethod.POST, "/products").hasRole(UserRole.ADMIN.getRole())
+                                .requestMatchers(HttpMethod.PUT, "/products/update").hasRole(UserRole.ADMIN.getRole())
+                                .requestMatchers(HttpMethod.DELETE, "/products/{id}").hasRole(UserRole.ADMIN.getRole())
+                                .requestMatchers(HttpMethod.POST, "/categories").hasRole(UserRole.ADMIN.getRole())
+                                .requestMatchers(HttpMethod.PUT, "/categories/update").hasRole(UserRole.ADMIN.getRole())
+                                .requestMatchers(HttpMethod.DELETE, "/categories/{id}").hasRole(UserRole.ADMIN.getRole())
+                                .requestMatchers(HttpMethod.DELETE, "/categories/**").hasRole(UserRole.ADMIN.getRole())
                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

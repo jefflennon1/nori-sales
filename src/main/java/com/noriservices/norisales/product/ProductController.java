@@ -47,7 +47,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(updated);
     }
 
-    @DeleteMapping("/delete={id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<ProductResponseDTO> exclude(@PathVariable UUID id){
         ProductResponseDTO dto = service.findById(id);
         if(dto == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

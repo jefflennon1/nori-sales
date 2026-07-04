@@ -52,7 +52,7 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @DeleteMapping("/delete={id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<CategoryResponseDTO> delete(@PathVariable UUID id){
        service.delete(id);
        return ResponseEntity.ok().build();
