@@ -66,4 +66,19 @@ public class GlobalExceptionHandler {
                 ApiErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal server error",
                         ex.getMessage(), request.getRequestURI()));
     }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ApiErrorResponse> handleUserAlreadyExists(
+            UserAlreadyExistsException ex,
+            HttpServletRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                ApiErrorResponse.of(
+                        HttpStatus.CONFLICT.value(),
+                        "User already exists",
+                        ex.getMessage(),
+                        request.getRequestURI()
+                )
+        );
+    }
 }

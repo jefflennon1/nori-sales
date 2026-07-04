@@ -20,11 +20,10 @@ public class UserService {
     }
 
     public User save(RegisterUserDTO dto){
-     if(userRepository.findByUsername(dto.username()) != null) throw  new UserAlreadyExistsException("Username already in use");
+     if(userRepository.findByUsername(dto.username()).isPresent()) throw  new UserAlreadyExistsException("Username already in use");
      if(userRepository.findByEmail(dto.email()).isPresent()) throw  new UserAlreadyExistsException("Email already in use");
      String encryptedPassword = passwordEncoder.encode(dto.password());
      User user = new User(dto.username(), dto.name(), dto.email(), encryptedPassword, UserRole.BUYER);
-     user.setActive(true);
 
      return this.userRepository.save(user);
     }
