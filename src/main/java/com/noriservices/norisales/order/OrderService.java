@@ -79,7 +79,6 @@ public class OrderService {
     public OrderResponseDTO findDTOById(UUID orderId) {
         User user = userService.extractLoggedUser();
         Order entity = findById(orderId);
-        assert user != null;
         if(!user.getRole().equals(UserRole.ADMIN) && !entity.getUser().getId().equals(user.getId())) throw new ForbiddenOperationException("Action not permitted for the logged-in user.");
 
         return orderMapper.toResponse(entity);

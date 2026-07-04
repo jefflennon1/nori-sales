@@ -83,7 +83,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ForbiddenOperationException.class)
-    public ResponseEntity<ApiErrorResponse> handleUnauthorizedUserException(
+    public ResponseEntity<ApiErrorResponse> handleForbiddenOperation(
             ForbiddenOperationException ex,
             HttpServletRequest request
     ) {
