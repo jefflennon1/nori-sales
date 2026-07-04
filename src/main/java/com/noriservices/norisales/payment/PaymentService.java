@@ -10,6 +10,7 @@ import com.noriservices.norisales.order.OrderService;
 import com.noriservices.norisales.order.OrderStatus;
 import com.noriservices.norisales.payment.dto.PaymentResponseDTO;
 import com.noriservices.norisales.payment.dto.WebhookDTO;
+import com.noriservices.norisales.shared.exception.ResourceNotFoundException;
 import com.noriservices.norisales.user.User;
 import com.noriservices.norisales.user.UserService;
 import com.noriservices.norisales.order.event.DTO.OrderConfirmedEventDTO;
@@ -17,7 +18,6 @@ import com.noriservices.norisales.order.event.DTO.OrderItemEventDTO;
 import com.noriservices.norisales.order.event.OrderEventProducer;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

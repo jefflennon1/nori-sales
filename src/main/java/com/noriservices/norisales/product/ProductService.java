@@ -4,14 +4,12 @@ import com.noriservices.norisales.category.Category;
 import com.noriservices.norisales.category.CategoryService;
 import com.noriservices.norisales.product.dto.ProductRequestDTO;
 import com.noriservices.norisales.product.dto.ProductResponseDTO;
+import com.noriservices.norisales.shared.exception.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.kafka.common.errors.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
