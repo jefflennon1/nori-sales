@@ -67,6 +67,12 @@ public class GlobalExceptionHandler {
                         "An unexpected error occurred. Please try again later.", request.getRequestURI()));
     }
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleNotFound(RuntimeException ex, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                ApiErrorResponse.of(HttpStatus.NOT_FOUND.value(), "Resource not found", ex.getMessage(), request.getRequestURI()));
+    }
+
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<ApiErrorResponse> handleUserAlreadyExists(
             UserAlreadyExistsException ex,
@@ -103,9 +109,9 @@ public class GlobalExceptionHandler {
             PendingPaymentException ex,
             HttpServletRequest request
     ) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
                 ApiErrorResponse.of(
-                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.CONFLICT.value(),
                         "Pending Payment.",
                         ex.getMessage(),
                         request.getRequestURI()
@@ -152,8 +158,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(
                 ApiErrorResponse.of(
                         HttpStatus.BAD_GATEWAY.value(),
-                        "Unable to process payment with the external provider...",
-                        ex.getMessage(),
+                        "Unable to process payment with the external provider. ",
+                        "An unexpected error occurred. Please try again later.",
                         request.getRequestURI()
                 )
         );
