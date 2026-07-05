@@ -82,19 +82,9 @@ public class PaymentService {
     }
 
     public void processPaymentWebhook(WebhookDTO webhookDTO) {
-      try {
 
-          if(mercadoPagoGateway.isPaymentApproved(webhookDTO.data().id())){
-              Payment payment = repository.findByExternalIdForUpdate(webhookDTO.data().id()).orElseThrow(() -> new ResourceNotFoundException("Payment not found: "+ webhookDTO.data().id()));
+        if (!mercadoPagoGateway.isPaymentApproved(webhookDTO.data().id())) return;
 
-              if(payment.getStatus().equals(PaymentStatus.APPROVED)) return;
-
-
-              paymentConfirmationService.confirmApprovedPayment(webhookDTO.data().id());
-
-          }
-      } catch (PaymentProviderException ex){
-          throw new PaymentProviderException("Failed to process payment webhook. ", ex.getCause());
-      }
+        paymentConfirmationService.confirmApprovedPayment(webhookDTO.data().id());
     }
 }
