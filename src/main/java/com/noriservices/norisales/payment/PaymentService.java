@@ -78,9 +78,9 @@ public class PaymentService {
 
                 return mapper.toResponse(repository.save(payment));
         } catch (MPApiException e) {
-            throw new PaymentProviderException("Mercado Pago API error: " + e.getApiResponse().getContent());
+            throw new PaymentProviderException("Mercado Pago API error: ", e.getCause());
         } catch (MPException e) {
-            throw new PaymentProviderException("Mercado Pago error: " + e.getMessage());
+            throw new PaymentProviderException("Mercado Pago error: " , e.getCause());
         }
     }
 
@@ -112,7 +112,7 @@ public class PaymentService {
               saleEventProducer.publishOrderConfirmed(event);
           }
       } catch (MPException | MPApiException ex){
-          throw new PaymentProviderException("Failed to process payment webhook: "+ ex.getMessage());
+          throw new PaymentProviderException("Failed to process payment webhook. ", ex.getCause());
       }
     }
 }
