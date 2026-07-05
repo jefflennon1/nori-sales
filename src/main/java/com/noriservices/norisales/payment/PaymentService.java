@@ -10,6 +10,7 @@ import com.noriservices.norisales.order.OrderService;
 import com.noriservices.norisales.order.OrderStatus;
 import com.noriservices.norisales.payment.dto.PaymentResponseDTO;
 import com.noriservices.norisales.payment.dto.WebhookDTO;
+import com.noriservices.norisales.payment.mercadopago.MercadoPagoGateway;
 import com.noriservices.norisales.shared.exception.ForbiddenOperationException;
 import com.noriservices.norisales.shared.exception.PaymentProviderException;
 import com.noriservices.norisales.shared.exception.PendingPaymentException;
@@ -36,6 +37,8 @@ public class PaymentService {
     private final OrderService orderService;
     private final UserService userService;
     private final OrderEventProducer saleEventProducer;
+    private final MercadoPagoGateway mercadoPagoGateway;
+
 
     public PaymentResponseDTO generatePaymentByPix(UUID orderId){
         try {
@@ -87,9 +90,8 @@ public class PaymentService {
     @Transactional
     public void processPaymentWebhook(WebhookDTO webhookDTO) {
       try {
-          PaymentClient client = new PaymentClient();
-          com.mercadopago.resources.payment.Payment mpPayment = client.get(Long.parseLong(webhookDTO.data().id()));
-          if(mpPayment.getStatus().equals("approved")){
+
+          if(mercadoPagoGateway.isPaymentApproved(webhookDTO.data().id())){
               Payment payment = repository.findByExternalId(webhookDTO.data().id()).orElseThrow(() -> new ResourceNotFoundException("Payment not found: "+ webhookDTO.data().id()));
 
               if(payment.getStatus().equals(PaymentStatus.APPROVED)) return;
@@ -114,7 +116,7 @@ public class PaymentService {
 
               saleEventProducer.publishOrderConfirmed(event);
           }
-      } catch (MPException | MPApiException ex){
+      } catch (PaymentProviderException ex){
           throw new PaymentProviderException("Failed to process payment webhook. ", ex.getCause());
       }
     }
