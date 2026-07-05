@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
                 ApiErrorResponse.of(HttpStatus.BAD_REQUEST.value(), "Invalid request", ex.getMessage(), request.getRequestURI()));
     }
 
-    @ExceptionHandler({NoSuchElementException.class, org.apache.kafka.common.errors.ResourceNotFoundException.class})
+    @ExceptionHandler({NoSuchElementException.class, com.noriservices.norisales.shared.exception.ResourceNotFoundException.class})
     public ResponseEntity<ApiErrorResponse> handleNotFound(RuntimeException ex, HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 ApiErrorResponse.of(HttpStatus.NOT_FOUND.value(), "Resource not found", ex.getMessage(), request.getRequestURI()));
@@ -118,10 +118,40 @@ public class GlobalExceptionHandler {
             ProductInactiveException ex,
             HttpServletRequest request
     ) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
                 ApiErrorResponse.of(
-                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.CONFLICT.value(),
                         "Product is inactive",
+                        ex.getMessage(),
+                        request.getRequestURI()
+                )
+        );
+    }
+
+    @ExceptionHandler(ProductQuantityInvalidException.class)
+    public ResponseEntity<ApiErrorResponse> handleProductQuantityInvalid(
+            ProductQuantityInvalidException ex,
+            HttpServletRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                ApiErrorResponse.of(
+                        HttpStatus.CONFLICT.value(),
+                        "Quantity of Product is invalid",
+                        ex.getMessage(),
+                        request.getRequestURI()
+                )
+        );
+    }
+
+    @ExceptionHandler(PaymentProviderException.class)
+    public ResponseEntity<ApiErrorResponse> handlePaymentProviderError(
+            PaymentProviderException ex,
+            HttpServletRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                ApiErrorResponse.of(
+                        HttpStatus.CONFLICT.value(),
+                        "Mercado Pago API error...",
                         ex.getMessage(),
                         request.getRequestURI()
                 )
