@@ -11,6 +11,7 @@ import com.noriservices.norisales.order.OrderStatus;
 import com.noriservices.norisales.payment.dto.PaymentResponseDTO;
 import com.noriservices.norisales.payment.dto.WebhookDTO;
 import com.noriservices.norisales.shared.exception.ForbiddenOperationException;
+import com.noriservices.norisales.shared.exception.PaymentProviderException;
 import com.noriservices.norisales.shared.exception.PendingPaymentException;
 import com.noriservices.norisales.shared.exception.ResourceNotFoundException;
 import com.noriservices.norisales.user.User;
@@ -36,7 +37,7 @@ public class PaymentService {
     private final UserService userService;
     private final OrderEventProducer saleEventProducer;
 
-    public PaymentResponseDTO generatePaymentByPix(UUID orderId) throws ForbiddenOperationException, PendingPaymentException, MPApiException, MPException {
+    public PaymentResponseDTO generatePaymentByPix(UUID orderId){
         try {
               Order order = orderService.findById(orderId);
               User user = userService.extractLoggedUser();
@@ -77,9 +78,9 @@ public class PaymentService {
 
                 return mapper.toResponse(repository.save(payment));
         } catch (MPApiException e) {
-            throw new MPApiException("Mercado Pago API error: " + e.getApiResponse().getContent(), e.getApiResponse());
+            throw new PaymentProviderException("Mercado Pago API error: " + e.getApiResponse().getContent());
         } catch (MPException e) {
-            throw new MPException("Mercado Pago error: " + e.getMessage());
+            throw new PaymentProviderException("Mercado Pago error: " + e.getMessage());
         }
     }
 

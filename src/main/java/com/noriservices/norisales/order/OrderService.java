@@ -5,7 +5,10 @@ import com.noriservices.norisales.order.dto.OrderRequestDTO;
 import com.noriservices.norisales.order.dto.OrderResponseDTO;
 import com.noriservices.norisales.product.Product;
 import com.noriservices.norisales.product.ProductService;
-import com.noriservices.norisales.shared.exception.*;
+import com.noriservices.norisales.shared.exception.ResourceNotFoundException;
+import com.noriservices.norisales.shared.exception.ProductInactiveException;
+import com.noriservices.norisales.shared.exception.ProductQuantityInvalidException;
+import com.noriservices.norisales.shared.exception.ForbiddenOperationException;
 import com.noriservices.norisales.user.User;
 import com.noriservices.norisales.user.UserRole;
 import com.noriservices.norisales.user.UserService;
@@ -38,7 +41,7 @@ public class OrderService {
         return repository.findAll(pageable).map(orderMapper::toResponse);
     }
 
-    public OrderResponseDTO create(OrderRequestDTO order) throws ProductQuantityInvalidException, ProductInactiveException {
+    public OrderResponseDTO create(OrderRequestDTO order) {
         User user = userService.extractLoggedUser();
         List<OrderItem> orderItems = new ArrayList<>();
         for(OrderItemRequestDTO item: order.items()){
