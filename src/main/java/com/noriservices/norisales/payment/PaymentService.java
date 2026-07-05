@@ -92,7 +92,7 @@ public class PaymentService {
       try {
 
           if(mercadoPagoGateway.isPaymentApproved(webhookDTO.data().id())){
-              Payment payment = repository.findByExternalId(webhookDTO.data().id()).orElseThrow(() -> new ResourceNotFoundException("Payment not found: "+ webhookDTO.data().id()));
+              Payment payment = repository.findByExternalIdForUpdate(webhookDTO.data().id()).orElseThrow(() -> new ResourceNotFoundException("Payment not found: "+ webhookDTO.data().id()));
 
               if(payment.getStatus().equals(PaymentStatus.APPROVED)) return;
 
