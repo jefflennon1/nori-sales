@@ -10,20 +10,15 @@ import com.noriservices.norisales.order.OrderService;
 import com.noriservices.norisales.order.OrderStatus;
 import com.noriservices.norisales.payment.dto.PaymentResponseDTO;
 import com.noriservices.norisales.payment.dto.WebhookDTO;
+import com.noriservices.norisales.payment.mercadopago.MercadoPagoGateway;
 import com.noriservices.norisales.shared.exception.ForbiddenOperationException;
 import com.noriservices.norisales.shared.exception.PaymentProviderException;
 import com.noriservices.norisales.shared.exception.PendingPaymentException;
 import com.noriservices.norisales.shared.exception.ResourceNotFoundException;
 import com.noriservices.norisales.user.User;
 import com.noriservices.norisales.user.UserService;
-import com.noriservices.norisales.order.event.DTO.OrderConfirmedEventDTO;
-import com.noriservices.norisales.order.event.DTO.OrderItemEventDTO;
-import com.noriservices.norisales.order.event.OrderEventProducer;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,7 +30,9 @@ public class PaymentService {
     private final PaymentMapper mapper;
     private final OrderService orderService;
     private final UserService userService;
-    private final OrderEventProducer saleEventProducer;
+    private final MercadoPagoGateway mercadoPagoGateway;
+    private final PaymentConfirmationService paymentConfirmationService;
+
 
     public PaymentResponseDTO generatePaymentByPix(UUID orderId){
         try {
@@ -84,34 +81,19 @@ public class PaymentService {
         }
     }
 
-    @Transactional
     public void processPaymentWebhook(WebhookDTO webhookDTO) {
       try {
-          PaymentClient client = new PaymentClient();
-          com.mercadopago.resources.payment.Payment mpPayment = client.get(Long.parseLong(webhookDTO.data().id()));
-          if(mpPayment.getStatus().equals("approved")){
-              Payment payment = repository.findByExternalId(webhookDTO.data().id()).orElseThrow(() -> new ResourceNotFoundException("Payment not found: "+ webhookDTO.data().id()));
-              payment.setStatus(PaymentStatus.APPROVED);
-              payment.setPaidAt(LocalDateTime.now());
-              repository.save(payment);
-              orderService.confirmPayment(payment.getOrder().getId());
 
-              Order order = orderService.findById(payment.getOrder().getId());
-              OrderConfirmedEventDTO event = new OrderConfirmedEventDTO(
-                      order.getId(),
-                      order.getUser().getId(),
-                      order.getItems().stream()
-                              .map(item -> new OrderItemEventDTO(
-                                      item.getProduct().getId(),
-                                      item.getQuantity()
-                              ))
-                              .toList(),
-                      LocalDateTime.now()
-              );
+          if(mercadoPagoGateway.isPaymentApproved(webhookDTO.data().id())){
+              Payment payment = repository.findByExternalIdForUpdate(webhookDTO.data().id()).orElseThrow(() -> new ResourceNotFoundException("Payment not found: "+ webhookDTO.data().id()));
 
-              saleEventProducer.publishOrderConfirmed(event);
+              if(payment.getStatus().equals(PaymentStatus.APPROVED)) return;
+
+
+              paymentConfirmationService.confirmApprovedPayment(webhookDTO.data().id());
+
           }
-      } catch (MPException | MPApiException ex){
+      } catch (PaymentProviderException ex){
           throw new PaymentProviderException("Failed to process payment webhook. ", ex.getCause());
       }
     }
