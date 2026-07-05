@@ -85,31 +85,34 @@ public class PaymentService {
     }
 
     @Transactional
-    public void processPaymentWebhook(WebhookDTO webhookDTO) throws MPException, MPApiException {
-        PaymentClient client = new PaymentClient();
-        com.mercadopago.resources.payment.Payment mpPayment = client.get(Long.parseLong(webhookDTO.data().id()));
-        if(mpPayment.getStatus().equals("approved")){
-            Payment payment = repository.findByExternalId(webhookDTO.data().id()).orElseThrow(() -> new ResourceNotFoundException("Payment not found: "+ webhookDTO.data().id()));
-            payment.setStatus(PaymentStatus.APPROVED);
-            payment.setPaidAt(LocalDateTime.now());
-            repository.save(payment);
-            orderService.confirmPayment(payment.getOrder().getId());
+    public void processPaymentWebhook(WebhookDTO webhookDTO) {
+      try {
+          PaymentClient client = new PaymentClient();
+          com.mercadopago.resources.payment.Payment mpPayment = client.get(Long.parseLong(webhookDTO.data().id()));
+          if(mpPayment.getStatus().equals("approved")){
+              Payment payment = repository.findByExternalId(webhookDTO.data().id()).orElseThrow(() -> new ResourceNotFoundException("Payment not found: "+ webhookDTO.data().id()));
+              payment.setStatus(PaymentStatus.APPROVED);
+              payment.setPaidAt(LocalDateTime.now());
+              repository.save(payment);
+              orderService.confirmPayment(payment.getOrder().getId());
 
-            Order order = orderService.findById(payment.getOrder().getId());
-            OrderConfirmedEventDTO event = new OrderConfirmedEventDTO(
-                    order.getId(),
-                    order.getUser().getId(),
-                    order.getItems().stream()
-                            .map(item -> new OrderItemEventDTO(
-                                    item.getProduct().getId(),
-                                    item.getQuantity()
-                            ))
-                            .toList(),
-                    LocalDateTime.now()
-            );
+              Order order = orderService.findById(payment.getOrder().getId());
+              OrderConfirmedEventDTO event = new OrderConfirmedEventDTO(
+                      order.getId(),
+                      order.getUser().getId(),
+                      order.getItems().stream()
+                              .map(item -> new OrderItemEventDTO(
+                                      item.getProduct().getId(),
+                                      item.getQuantity()
+                              ))
+                              .toList(),
+                      LocalDateTime.now()
+              );
 
-            saleEventProducer.publishOrderConfirmed(event);
-        }
+              saleEventProducer.publishOrderConfirmed(event);
+          }
+      } catch (MPException | MPApiException ex){
+          throw new PaymentProviderException("Failed to process payment webhook: "+ ex.getMessage());
+      }
     }
-
 }
