@@ -14,7 +14,6 @@ import com.noriservices.norisales.payment.mercadopago.MercadoPagoGateway;
 import com.noriservices.norisales.shared.exception.ForbiddenOperationException;
 import com.noriservices.norisales.shared.exception.PaymentProviderException;
 import com.noriservices.norisales.shared.exception.PendingPaymentException;
-import com.noriservices.norisales.shared.exception.ResourceNotFoundException;
 import com.noriservices.norisales.user.User;
 import com.noriservices.norisales.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -74,10 +73,8 @@ public class PaymentService {
 
 
                 return mapper.toResponse(repository.save(payment));
-        } catch (MPApiException e) {
-            throw new PaymentProviderException("Mercado Pago API error: ", e.getCause());
-        } catch (MPException e) {
-            throw new PaymentProviderException("Mercado Pago error: " , e.getCause());
+        } catch (MPApiException | MPException e) {
+            throw new PaymentProviderException("Failed to create payment with Mercado Pago ", e);
         }
     }
 
