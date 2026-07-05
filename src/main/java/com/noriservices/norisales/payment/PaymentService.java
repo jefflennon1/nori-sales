@@ -10,6 +10,8 @@ import com.noriservices.norisales.order.OrderService;
 import com.noriservices.norisales.order.OrderStatus;
 import com.noriservices.norisales.payment.dto.PaymentResponseDTO;
 import com.noriservices.norisales.payment.dto.WebhookDTO;
+import com.noriservices.norisales.shared.exception.ForbiddenOperationException;
+import com.noriservices.norisales.shared.exception.PendingPaymentException;
 import com.noriservices.norisales.shared.exception.ResourceNotFoundException;
 import com.noriservices.norisales.user.User;
 import com.noriservices.norisales.user.UserService;
@@ -34,12 +36,12 @@ public class PaymentService {
     private final UserService userService;
     private final OrderEventProducer saleEventProducer;
 
-    public PaymentResponseDTO generatePaymentByPix(UUID orderId) throws MPException, MPApiException {
+    public PaymentResponseDTO generatePaymentByPix(UUID orderId) throws ForbiddenOperationException, PendingPaymentException, MPApiException, MPException {
         try {
               Order order = orderService.findById(orderId);
               User user = userService.extractLoggedUser();
-              if(!order.getUser().getId().equals(user.getId())) throw new RuntimeException("Order does not belong to logged-in user!");
-              if(!order.getStatus().equals(OrderStatus.PENDING_PAYMENT)) throw new RuntimeException("Payment has not been generate, please check your status order!");
+              if(!order.getUser().getId().equals(user.getId())) throw new ForbiddenOperationException("Order does not belong to logged-in user!");
+              if(!order.getStatus().equals(OrderStatus.PENDING_PAYMENT)) throw new PendingPaymentException("Payment has not been generate, please check your status order!");
               Optional<Payment> existingPayment = repository.findByOrderIdAndStatus(orderId, PaymentStatus.PENDING);
 
                 if (existingPayment.isPresent()) {
@@ -75,9 +77,9 @@ public class PaymentService {
 
                 return mapper.toResponse(repository.save(payment));
         } catch (MPApiException e) {
-            throw new RuntimeException("Mercado Pago API error: " + e.getApiResponse().getContent());
+            throw new MPApiException("Mercado Pago API error: " + e.getApiResponse().getContent(), e.getApiResponse());
         } catch (MPException e) {
-            throw new RuntimeException("Mercado Pago error: " + e.getMessage());
+            throw new MPException("Mercado Pago error: " + e.getMessage());
         }
     }
 
