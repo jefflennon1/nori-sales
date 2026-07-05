@@ -91,6 +91,9 @@ public class PaymentService {
           com.mercadopago.resources.payment.Payment mpPayment = client.get(Long.parseLong(webhookDTO.data().id()));
           if(mpPayment.getStatus().equals("approved")){
               Payment payment = repository.findByExternalId(webhookDTO.data().id()).orElseThrow(() -> new ResourceNotFoundException("Payment not found: "+ webhookDTO.data().id()));
+
+              if(payment.getStatus().equals(PaymentStatus.APPROVED)) return;
+
               payment.setStatus(PaymentStatus.APPROVED);
               payment.setPaidAt(LocalDateTime.now());
               repository.save(payment);
