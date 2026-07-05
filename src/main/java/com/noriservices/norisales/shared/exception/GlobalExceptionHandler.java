@@ -2,6 +2,7 @@ package com.noriservices.norisales.shared.exception;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -12,9 +13,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
-
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -42,12 +42,6 @@ public class GlobalExceptionHandler {
                 ApiErrorResponse.of(HttpStatus.BAD_REQUEST.value(), "Invalid request", ex.getMessage(), request.getRequestURI()));
     }
 
-    @ExceptionHandler({NoSuchElementException.class, com.noriservices.norisales.shared.exception.ResourceNotFoundException.class})
-    public ResponseEntity<ApiErrorResponse> handleNotFound(RuntimeException ex, HttpServletRequest request) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                ApiErrorResponse.of(HttpStatus.NOT_FOUND.value(), "Resource not found", ex.getMessage(), request.getRequestURI()));
-    }
-
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ApiErrorResponse> handleAuthentication(AuthenticationException ex, HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
@@ -62,9 +56,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleGeneric(Exception ex, HttpServletRequest request) {
+        log.error(
+                "Unexpected error while processing request [{} {}]",
+                request.getMethod(),
+                request.getRequestURI(),
+                ex
+        );
         return ResponseEntity.internalServerError().body(
                 ApiErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal server error",
-                        ex.getMessage(), request.getRequestURI()));
+                        "An unexpected error occurred. Please try again later.", request.getRequestURI()));
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
@@ -148,10 +148,11 @@ public class GlobalExceptionHandler {
             PaymentProviderException ex,
             HttpServletRequest request
     ) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+        log.error("Mercado Pago API error", ex);
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(
                 ApiErrorResponse.of(
-                        HttpStatus.CONFLICT.value(),
-                        "Mercado Pago API error...",
+                        HttpStatus.BAD_GATEWAY.value(),
+                        "Unable to process payment with the external provider...",
                         ex.getMessage(),
                         request.getRequestURI()
                 )
