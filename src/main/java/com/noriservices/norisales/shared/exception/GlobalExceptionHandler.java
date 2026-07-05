@@ -96,4 +96,35 @@ public class GlobalExceptionHandler {
                 )
         );
     }
+
+
+    @ExceptionHandler(PendingPaymentException.class)
+    public ResponseEntity<ApiErrorResponse> handlePendingPayment(
+            PendingPaymentException ex,
+            HttpServletRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                ApiErrorResponse.of(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "Pending Payment.",
+                        ex.getMessage(),
+                        request.getRequestURI()
+                )
+        );
+    }
+
+    @ExceptionHandler(ProductInactiveException.class)
+    public ResponseEntity<ApiErrorResponse> handleProductInactive(
+            ProductInactiveException ex,
+            HttpServletRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                ApiErrorResponse.of(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "Product is inactive",
+                        ex.getMessage(),
+                        request.getRequestURI()
+                )
+        );
+    }
 }

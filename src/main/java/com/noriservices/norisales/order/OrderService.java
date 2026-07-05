@@ -5,8 +5,7 @@ import com.noriservices.norisales.order.dto.OrderRequestDTO;
 import com.noriservices.norisales.order.dto.OrderResponseDTO;
 import com.noriservices.norisales.product.Product;
 import com.noriservices.norisales.product.ProductService;
-import com.noriservices.norisales.shared.exception.ForbiddenOperationException;
-import com.noriservices.norisales.shared.exception.ResourceNotFoundException;
+import com.noriservices.norisales.shared.exception.*;
 import com.noriservices.norisales.user.User;
 import com.noriservices.norisales.user.UserRole;
 import com.noriservices.norisales.user.UserService;
@@ -39,13 +38,13 @@ public class OrderService {
         return repository.findAll(pageable).map(orderMapper::toResponse);
     }
 
-    public OrderResponseDTO create(OrderRequestDTO order) {
+    public OrderResponseDTO create(OrderRequestDTO order) throws ProductQuantityInvalidException, ProductInactiveException {
         User user = userService.extractLoggedUser();
         List<OrderItem> orderItems = new ArrayList<>();
         for(OrderItemRequestDTO item: order.items()){
             Product product = productService.findEntityById(item.productId());
-            if(!product.isActive()) throw new RuntimeException(" Product is inactive: "+ item.productId());
-            if(product.getAvailableQuantity() < item.quantity() ) throw new RuntimeException("The available quantity  of the product is less than the requested amount: "+ item.productId());
+            if(!product.isActive()) throw new ProductInactiveException(" Product is inactive: "+ item.productId());
+            if(product.getAvailableQuantity() < item.quantity() ) throw new ProductQuantityInvalidException("The available quantity  of the product is less than the requested amount: "+ item.productId());
 
             BigDecimal unitPrice = product.getPrice();
             BigDecimal subtotal = unitPrice.multiply(BigDecimal.valueOf(item.quantity()));
